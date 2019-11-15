@@ -1,9 +1,10 @@
 dist: xenial
 language: cpp
 compiler: clang
+before_install:
+  - sudo apt-get update
 addons:
   apt:
-    update: true
     packages:
     - libboost-test-dev
     - libspdlog-dev
