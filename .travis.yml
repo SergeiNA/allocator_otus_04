@@ -7,6 +7,7 @@ addons:
     - libboost-test-dev
     - libspdlog-dev
 script:
+- user apt update
 - cmake .
 - cmake --build .
 #- cmake --build . --target test
