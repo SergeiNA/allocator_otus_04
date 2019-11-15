@@ -44,7 +44,7 @@ private:
 
 template <class T, class Alloc =std::allocator<Node<T>> >
 class CustomContaiter{
-    using Node = Node<T>;
+    using NodeT = Node<T>;
     Alloc alloc;
 
 
@@ -58,7 +58,7 @@ public:
             head = tail;
             return;
         }
-        Node* temp = alloc.allocate(1);
+        NodeT* temp = alloc.allocate(1);
         alloc.construct(temp,elem);
         tail->next = temp;
         tail = temp;
@@ -72,7 +72,7 @@ public:
             head = tail;
             return;
         }
-        Node* temp = alloc.allocate(1);
+        NodeT* temp = alloc.allocate(1);
         alloc.construct(temp,std::forward<Args>(args)...);
         tail->next = temp;
         tail = temp;
@@ -84,7 +84,7 @@ public:
         #if DEBUG
             std::cout<<__PRETTY_FUNCTION__ <<std::endl;
         #endif
-        Node* curr = rhs.head;
+        NodeT* curr = rhs.head;
         while(curr!=nullptr){
             push(curr->value);
             curr=curr->next;
@@ -120,24 +120,24 @@ public:
 
     ~CustomContaiter(){
         while(head!=nullptr){
-            Node* curr = head;
+            NodeT* curr = head;
             head = head->next;
             alloc.destroy(curr);
             alloc.deallocate(curr,1);
         }
     }
 
-    ListIterator<Node> begin(){
+    ListIterator<NodeT> begin(){
         return ListIterator(head);
     }
-    ListIterator<Node> end(){
+    ListIterator<NodeT> end(){
         return ListIterator(tail->next);
     }
 
-    ListIterator<Node> begin() const{
+    ListIterator<NodeT> begin() const{
         return ListIterator(head);
     }
-    ListIterator<Node> end() const{
+    ListIterator<NodeT> end() const{
         return ListIterator(tail->next);
     }
 
@@ -145,6 +145,6 @@ public:
         return head->value.getValues();
     }
 private:
-    Node* head;
-    Node* tail;
+    NodeT* head;
+    NodeT* tail;
 };

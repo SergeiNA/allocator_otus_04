@@ -1,13 +1,13 @@
 dist: xenial
 language: cpp
-compiler: clang
+compiler: gcc
 addons:
   apt:
     packages:
     - libboost-test-dev
     - libspdlog-dev
-    - clang
 script:
+- sudo apt-get install gcc
 - cmake .
 - cmake --build .
 #- cmake --build . --target test

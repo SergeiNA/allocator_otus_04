@@ -14,10 +14,10 @@ size_t fib(){
 }
 
 template<>
-size_t fib<0>(){return 1;};
+size_t fib<0>(){return 1;}
 
 template<>
-size_t fib<1>(){return 1;};
+size_t fib<1>(){return 1;}
 
 template<size_t N>
 size_t fact(){
