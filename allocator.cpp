@@ -1,9 +1,11 @@
 
-//#define DEBUG
+//#define DEBUG 1
 
 #include <iostream>
 #include <vector>
 #include <map>
+#include <tuple>
+
 #include "utility.h"
 #include "easy.h"
 #include "hard.h"
@@ -20,15 +22,20 @@ int main(int, char *[])
 
         std::map<int, hard, std::less<int>> map_std;
         for (size_t i = 0; i < SIZE; ++i)
-            map_std.try_emplace(i, FibFact[i].first, FibFact[i].second);
-
+            //map_std.try_emplace(i, FibFact[i].first, FibFact[i].second); // travis CI problems (locally works)
+            map_std.emplace(std::piecewise_construct, 
+            std::forward_as_tuple(i), 
+            std::forward_as_tuple(FibFact[i].first, FibFact[i].second));
         // allocations of std::stack<T*> stack_ptr ;
         // libstdc++.so.6->malloc(64)
         // libstdc++.so.6->malloc(512)
 
         std::map<int, hard, std::less<int>, block_allocator<std::pair<const int, hard>, 10>> map_block;
         for (size_t i = 0; i < SIZE; ++i)
-            map_block.try_emplace(i, FibFact[i].first, FibFact[i].second);
+            //map_block.try_emplace(i, FibFact[i].first, FibFact[i].second); // travis CI problems (locally works)
+            map_block.emplace(std::piecewise_construct, 
+            std::forward_as_tuple(i), 
+            std::forward_as_tuple(FibFact[i].first, FibFact[i].second));
 
         for (const auto &el : map_block)
             std::cout << el.second.getValues() << std::endl;
