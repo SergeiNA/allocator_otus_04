@@ -1,6 +1,6 @@
 dist: xenial
 language: cpp
-compiler: clang
+compiler: clang-6.0
 addons:
   apt:
     packages:
@@ -8,8 +8,7 @@ addons:
     - libspdlog-dev
 script:
 - sudo apt-get update
-- sudo apt-get --only-upgrade install clang
-- sudo apt-get install clang
+- sudo apt-get install -y clang-6.0
 - cmake .
 - cmake --build .
 #- cmake --build . --target test
