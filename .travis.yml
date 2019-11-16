@@ -14,21 +14,12 @@ addons:
     - sourceline: 'deb https://packages.chef.io/repos/apt/stable trusty main'
       - ubuntu-toolchain-r-test
     packages:
-    - libboost-test-dev
-    - g++-7
-before_install:
+      - libboost-test-dev
+      - g++-7
 script:
-- sudo apt-get update
-- cmake .
-- cmake --build .
-#- cmake --build . --target test
-- cmake --build . --target package
-deploy:
-  provider: script
-  skip_cleanup: true
-  script:
-    - curl -f -T allocator-0.0.${TRAVIS_BUILD_NUMBER}-Linux.deb -usergeina:${BINTRAY_API_KEY} "https://api.bintray.com/content/sergeina/otus/homework/${TRAVIS_BUILD_NUMBER}/allocator-0.0.${TRAVIS_BUILD_NUMBER}-Linux.deb;deb_distribution=xenial;deb_component=main;deb_architecture=amd64;publish=1"
-  on:
-    branch: master
-    branch: dev
+  - sudo apt-get update
+  - cmake .
+  - cmake --build .
+  #- cmake --build . --target test
+  - cmake --build . --target package
   
