@@ -13,7 +13,7 @@ configure_file(version.h.in ${PROJECT_SOURCE_DIR}/version.h)
 add_executable(allocator allocator.cpp container.h block_allocator.h hard.h easy.h utility.h)
 
 set_target_properties(allocator PROPERTIES
-        CXX_STANDARD 17
+        CXX_STANDARD 20
         CXX_STANDARD_REQUIRED ON
         COMPILE_OPTIONS "-Wpedantic;-Wall;-Wextra"
         )
