@@ -5,6 +5,7 @@ addons:
   apt:
     sources:
     - sourceline: 'deb https://packages.chef.io/repos/apt/stable trusty main'
+    - ubuntu-toolchain-r-test
     packages:
     - libboost-test-dev
     - libspdlog-dev
