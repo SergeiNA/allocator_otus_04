@@ -7,9 +7,8 @@ addons:
     - libboost-test-dev
     - libspdlog-dev
 script:
-- sudo apt-get upgrade
 - sudo apt-get update
-- sudo apt-get install clang
+- sudo apt-get install -y clang-6.0
 - cmake .
 - cmake --build .
 #- cmake --build . --target test
