@@ -26,10 +26,11 @@ int main(int, char *[])
             map_std.emplace(std::piecewise_construct, 
             std::forward_as_tuple(i), 
             std::forward_as_tuple(FibFact[i].first, FibFact[i].second));
+
+
         // allocations of std::stack<T*> stack_ptr ;
         // libstdc++.so.6->malloc(64)
         // libstdc++.so.6->malloc(512)
-
         std::map<int, hard, std::less<int>, block_allocator<std::pair<const int, hard>, 10>> map_block;
         for (size_t i = 0; i < SIZE; ++i)
             //map_block.try_emplace(i, FibFact[i].first, FibFact[i].second); // travis CI problems (locally works)
@@ -41,7 +42,6 @@ int main(int, char *[])
             std::cout << el.second.getValues() << std::endl;
     }
 #if DEBUG
-
     std::cout << "Custom container custom alloc ----------------\n";
 #endif
     {
@@ -55,14 +55,11 @@ int main(int, char *[])
 
         // // if in public    std::cout<<el.value.i<<' '<<el.value.d<<std::endl; works fine
         for (const auto &el : block_cont_hard)
-        {
             std::cout << el.value.getValues() << std::endl;
-        }
     }
 
 /// copy ctor move ctor same Alloc
 #if DEBUG
-
     std::cout << "CTOR MOVE HARD ------------------------\n";
 #endif
 
@@ -75,13 +72,11 @@ int main(int, char *[])
         CustomContaiter<hard, block_allocator<Node<hard>, 3>> move_hard(std::move(init_hard));
     }
 #if DEBUG
-
     std::cout << " CTOR COPY/MOVE EASY ------------------------\n";
 #endif
 
     {
         // move copy ctor with easy
-        std::cout << "---" << std::endl;
         CustomContaiter<easy, block_allocator<Node<easy>, 5>> init_easy;
         init_easy.try_push(1, 2);
         init_easy.try_push(1, 2);
@@ -96,13 +91,10 @@ int main(int, char *[])
     {
         CustomContaiter<easy, block_allocator<Node<easy>, 5>> init_easy;
         for (size_t i = 0; i < 3; i++)
-        {
             init_easy.try_push(FibFact[i].first, FibFact[i].second);
-        }
 
         CustomContaiter<easy> std_easy(init_easy);
         CustomContaiter<easy, block_allocator<Node<easy>, 2>> move_easy(std_easy);
     }
-
     return 0;
 }
