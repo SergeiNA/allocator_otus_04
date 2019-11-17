@@ -5,7 +5,6 @@
 #include <vector>
 #include <map>
 #include <tuple>
-
 #include "utility.h"
 #include "easy.h"
 #include "hard.h"
@@ -42,10 +41,9 @@ int main(int, char *[])
         for (size_t i = 0; i < SIZE; ++i)
             std_cont_hard.try_push(FibFact[i].first, FibFact[i].second);
 
-        CustomContaiter<hard, block_allocator<Node<hard>, 10>> block_cont_hard;
+        CustomContaiter<hard, block_allocator<hard, 10>> block_cont_hard;
         for (size_t i = 0; i < SIZE; ++i)
             block_cont_hard.try_push(FibFact[i].first, FibFact[i].second);
-
         // // if in public    std::cout<<el.value.i<<' '<<el.value.d<<std::endl; works fine
         for (const auto &el : block_cont_hard)
             std::cout << el.value.getValues() << std::endl;
@@ -58,11 +56,11 @@ int main(int, char *[])
 
     {
         // move for same with hard
-        CustomContaiter<hard, block_allocator<Node<hard>, 3>> init_hard;
+        CustomContaiter<hard, block_allocator<hard, 3>> init_hard;
         init_hard.try_push(1, 2);
         init_hard.try_push(1, 2);
         init_hard.try_push(1, 2);
-        CustomContaiter<hard, block_allocator<Node<hard>, 3>> move_hard(std::move(init_hard));
+        CustomContaiter<hard, block_allocator<hard, 3>> move_hard(std::move(init_hard));
     }
 #if DEBUG
     std::cout << " CTOR COPY/MOVE EASY ------------------------\n";
@@ -70,24 +68,24 @@ int main(int, char *[])
 
     {
         // move copy ctor with easy
-        CustomContaiter<easy, block_allocator<Node<easy>, 5>> init_easy;
+        CustomContaiter<easy, block_allocator<easy, 5>> init_easy;
         init_easy.try_push(1, 2);
         init_easy.try_push(1, 2);
         init_easy.try_push(1, 2);
-        CustomContaiter<easy, block_allocator<Node<easy>, 5>> copy_easy(init_easy);
-        CustomContaiter<easy, block_allocator<Node<easy>, 5>> move_easy(std::move(init_easy));
+        CustomContaiter<easy, block_allocator<easy, 5>> copy_easy(init_easy);
+        CustomContaiter<easy, block_allocator<easy, 5>> move_easy(std::move(init_easy));
     }
 #if DEBUG
     std::cout << "DIFFERENT ALLOC MOVE/COPY EASY------------------------\n";
 #endif
     // different Alloc - at now I have no idea how to move or copy hard in this case
     {
-        CustomContaiter<easy, block_allocator<Node<easy>, 5>> init_easy;
+        CustomContaiter<easy, block_allocator<easy, 5>> init_easy;
         for (size_t i = 0; i < 3; i++)
             init_easy.try_push(FibFact[i].first, FibFact[i].second);
 
         CustomContaiter<easy> std_easy(init_easy);
-        CustomContaiter<easy, block_allocator<Node<easy>, 2>> move_easy(std_easy);
+        CustomContaiter<easy, block_allocator<easy, 2>> move_easy(std_easy);
     }
     return 0;
 }

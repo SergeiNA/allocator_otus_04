@@ -2,51 +2,54 @@
 
 #include <memory>
 
-template<class T> 
-struct Node {
-    template<typename... Args>
-    Node (Args&&... val):value(std::forward<Args>(val)...), next(nullptr) {}
-    T value;
-    Node* next;
-};
-template<class Node>
-class ListIterator{
-public:
-    ListIterator():ptr{nullptr} {}
-    ListIterator(Node* ptr_node): ptr{ptr_node} {}
-
-    ListIterator operator++(int){
-        if(ptr==nullptr)
-            throw std::runtime_error("Ivalid iterator");
-        Node* temp = ptr;
-        ptr=ptr->next;
-        return ListIterator(temp);
-    }
-
-    ListIterator operator++(){
-        if(ptr==nullptr)
-            throw std::runtime_error("Ivalid iterator");
-        ptr=ptr->next;
-        return ListIterator(ptr);
-    }
-    Node& operator* (){
-        return *ptr;
-    }
-    bool operator ==(const ListIterator& rhs) const{
-        return ptr == rhs.ptr;
-    }
-    bool operator !=(const ListIterator& rhs) const{
-        return !(*this == rhs);
-    }
-private:
-    Node* ptr;
-};
-
-template <class T, class Alloc =std::allocator<Node<T>> >
+template <class T, class Alloc = std::allocator<T> >
 class CustomContaiter{
-    using NodeT = Node<T>;
-    Alloc alloc;
+    struct Node {
+        template<typename... Args>
+        Node (Args&&... val):value(std::forward<Args>(val)...), next(nullptr) {}
+        T value;
+        Node* next;
+    };
 
+    using allocator = typename Alloc::template rebind<Node>::other;
+    allocator alloc;
+private:
+    class ListIterator_
+    {
+    public:
+        ListIterator_() : ptr{nullptr} {}
+        ListIterator_(Node *ptr_node) : ptr{ptr_node} {}
+
+        ListIterator_ operator++(int){
+            if (ptr == nullptr)
+                throw std::runtime_error("Ivalid iterator");
+            Node *temp = ptr;
+            ptr = ptr->next;
+            return ListIterator_(temp);
+        }
+
+        ListIterator_ operator++(){
+            if (ptr == nullptr)
+                throw std::runtime_error("Ivalid iterator");
+            ptr = ptr->next;
+            return ListIterator_(ptr);
+        }
+        Node &operator*(){
+            return *ptr;
+        }
+        bool operator==(const ListIterator_ &rhs) const{
+            return ptr == rhs.ptr;
+        }
+        bool operator!=(const ListIterator_ &rhs) const{
+            return !(*this == rhs);
+        }
+
+    private:
+        Node *ptr;
+    };
+
+public:
+    typedef ListIterator_ Iterator;
 
 public:
     CustomContaiter():head{nullptr}, tail{nullptr} {}
@@ -58,7 +61,7 @@ public:
             head = tail;
             return;
         }
-        NodeT* temp = alloc.allocate(1);
+        Node* temp = alloc.allocate(1);
         alloc.construct(temp,elem);
         tail->next = temp;
         tail = temp;
@@ -72,19 +75,17 @@ public:
             head = tail;
             return;
         }
-        NodeT* temp = alloc.allocate(1);
+        Node* temp = alloc.allocate(1);
         alloc.construct(temp,std::forward<Args>(args)...);
         tail->next = temp;
         tail = temp;
     }
 
-
-
     CustomContaiter(const CustomContaiter<T,Alloc>& rhs):CustomContaiter() {
         #if DEBUG
             std::cout<<__PRETTY_FUNCTION__ <<std::endl;
         #endif
-        NodeT* curr = rhs.head;
+        Node* curr = rhs.head;
         while(curr!=nullptr){
             push(curr->value);
             curr=curr->next;
@@ -120,31 +121,27 @@ public:
 
     ~CustomContaiter(){
         while(head!=nullptr){
-            NodeT* curr = head;
+            Node* curr = head;
             head = head->next;
             alloc.destroy(curr);
             alloc.deallocate(curr,1);
         }
     }
 
-    ListIterator<NodeT> begin(){
-        return ListIterator(head);
+    Iterator begin(){
+        return Iterator(head);
     }
-    ListIterator<NodeT> end(){
-        return ListIterator(tail->next);
-    }
-
-    ListIterator<NodeT> begin() const{
-        return ListIterator(head);
-    }
-    ListIterator<NodeT> end() const{
-        return ListIterator(tail->next);
+    Iterator end(){
+        return Iterator(tail->next);
     }
 
-    auto displayHead() const {
-        return head->value.getValues();
+    Iterator begin() const{
+        return Iterator(head);
+    }
+    Iterator end() const{
+        return Iterator(tail->next);
     }
 private:
-    NodeT* head;
-    NodeT* tail;
+    Node* head;
+    Node* tail;
 };
