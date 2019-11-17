@@ -1,26 +1,47 @@
-version: ~> 1.0
 dist: xenial
 language: cpp
-compiler: gcc
-env:
-  - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
-before_install:
-  - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
-  - sudo apt-get -q update
-  - sudo apt-get -y install gcc-7
-  - eval "${MATRIX_EVAL}"
+compiler: clang
 addons:
   apt:
-    sources:
-    - sourceline: 'deb https://packages.chef.io/repos/apt/stable trusty main'
-      - ubuntu-toolchain-r-test
     packages:
-      - libboost-test-dev
-      - g++-7
+    - libboost-test-dev
+    - libspdlog-dev
 script:
-  - sudo apt-get update
-  - cmake .
-  - cmake --build .
-  #- cmake --build . --target test
-  - cmake --build . --target package
+- sudo apt-get update
+- cmake .
+- cmake --build .
+#- cmake --build . --target test
+- cmake --build . --target package
+deploy:
+  provider: script
+  skip_cleanup: true
+  script:
+    - curl -f -T allocator-0.0.${TRAVIS_BUILD_NUMBER}-Linux.deb -usergeina:${BINTRAY_API_KEY} "https://api.bintray.com/content/sergeina/otus/homework/${TRAVIS_BUILD_NUMBER}/allocator-0.0.${TRAVIS_BUILD_NUMBER}-Linux.deb;deb_distribution=xenial;deb_component=main;deb_architecture=amd64;publish=1"
+  on:
+    branch: master
+# version: ~> 1.0
+# dist: xenial
+# language: cpp
+# compiler: gcc
+# env:
+#   - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
+# before_install:
+#   - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+#   - sudo apt-get -q update
+#   - sudo apt-get -y install gcc-7
+#   - eval "${MATRIX_EVAL}"
+# addons:
+#   apt:
+#     sources:
+#     - sourceline: 'deb https://packages.chef.io/repos/apt/stable trusty main'
+#       - ubuntu-toolchain-r-test
+#     packages:
+#       - libboost-test-dev
+#       - g++-7
+# script:
+#   - sudo apt-get update
+#   - cmake .
+#   - cmake --build .
+#   #- cmake --build . --target test
+#   - cmake --build . --target package
   
