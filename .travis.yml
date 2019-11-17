@@ -1,15 +1,21 @@
+version: ~> 1.0
+os: linux
 dist: xenial
 language: cpp
 compiler: gcc
+env:
+  - MATRIX_EVAL="CC=gcc-7 && CXX=gcc-7"
 before_install:
   - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
   - sudo apt-get -q update
   - sudo apt-get -y install gcc-7
+  - eval "${MATRIX_EVAL}"
 addons:
   apt:
     packages:
     - libboost-test-dev
-    - libspdlog-dev
+    - gcc-7
+    #- libspdlog-dev
 script:
 - sudo apt-get update
 - cmake .
