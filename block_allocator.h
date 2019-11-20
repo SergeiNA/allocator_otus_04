@@ -15,41 +15,47 @@ struct block_allocator {
         using other = block_allocator<U,N>;
     };
 
-    T *allocate(std::size_t n) const {
-        if(!pos || pos == N){
-            pos = 0;
+    T *allocate([[maybe_unused]] std::size_t n) const {
+        if(!obj_counter || obj_counter == N){
+            obj_counter = 0;
         #if DEBUG
             std::cout <<"[START ALLOC] N: "<< N <<std::endl;
             std::cout<< "[ALLOC] SizeOf N*T: "<< N * n * sizeof(T) <<std::endl;
         #endif
-            auto p = std::malloc(N*n * sizeof(T));
+            auto p = std::malloc(N*sizeof(T));
             if (!p)
                 throw std::bad_alloc();
-            stack_ptr.push(reinterpret_cast<T *>(p));
+            ++block_counter;
+            block_ptr_stack.push(reinterpret_cast<T*>(p));
             #if DEBUG
-                std::cout <<"[INIT ALLOC] Return adrr: "<<std::hex<<stack_ptr.top()<<std::dec<<std::endl;
+                std::cout <<"[INIT ALLOC] Return adrr: "<<std::hex<<block_ptr_stack.top()<<std::dec<<std::endl;
             #endif
-            return stack_ptr.top()+pos++;
+            return block_ptr_stack.top()+obj_counter++;
         }
         #if DEBUG
-            std::cout <<"[CONTIN ALLOC] Return adrr: "<<std::hex<<stack_ptr.top()+pos<<std::dec<<std::endl;
+            std::cout <<"[CONTIN ALLOC] Return adrr: "<<std::hex<<block_ptr_stack.top()+obj_counter<<std::dec<<std::endl;
         #endif
-        return stack_ptr.top()+pos++;
+        return block_ptr_stack.top()+obj_counter++;
     }
 
     void deallocate([[maybe_unused]]T *p, [[maybe_unused]]std::size_t n) const {
         #if DEBUG
             std::cout <<"[DEALLOC] dealloc adrr: "<<std::hex<<p<<std::dec<<std::endl;
         #endif
-        --pos;
-        if(!pos){
+        --obj_counter;
+        if(!obj_counter){
             #if DEBUG
                 std::cout<<"[DEALLOC FREE]\n";
-                std::cout <<"Init adrr: "<<std::hex<<stack_ptr.top()<<"\naddr to free: "<<std::hex<<p<<std::dec<<std::endl;
+                std::cout <<"Init adrr: "<<std::hex<<block_ptr_stack.top()<<"\naddr to free: "<<std::hex<<p<<std::dec<<std::endl;
             #endif
-            pos = N;
-            std::free(stack_ptr.top());
-            stack_ptr.pop();
+            obj_counter = N;
+            --block_counter;
+            if(block_counter==0){
+                while(!block_ptr_stack.empty()){
+                    std::free(block_ptr_stack.top());
+                    block_ptr_stack.pop();
+                }
+            }
         }
     }
 
@@ -68,7 +74,8 @@ struct block_allocator {
         p->~T();
     }
 private:
-    mutable size_t pos = 0;
-    mutable std::stack<T*> stack_ptr;
+    mutable size_t obj_counter = 0;
+    mutable size_t block_counter = 0;
+    mutable std::stack<T*> block_ptr_stack;
 };
 
