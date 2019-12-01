@@ -15,14 +15,14 @@ struct block_allocator {
         using other = block_allocator<U,N>;
     };
 
-    T *allocate([[maybe_unused]] std::size_t n) const {
+    T *allocate(std::size_t n) {
         if(!obj_counter || obj_counter == N){
             obj_counter = 0;
         #if DEBUG
             std::cout <<"[START ALLOC] N: "<< N <<std::endl;
             std::cout<< "[ALLOC] SizeOf N*T: "<< N * n * sizeof(T) <<std::endl;
         #endif
-            auto p = std::malloc(N*sizeof(T));
+            auto p = std::malloc(n*N*sizeof(T));
             if (!p)
                 throw std::bad_alloc();
             ++block_counter;
@@ -30,19 +30,23 @@ struct block_allocator {
             #if DEBUG
                 std::cout <<"[INIT ALLOC] Return adrr: "<<std::hex<<block_ptr_stack.top()<<std::dec<<std::endl;
             #endif
-            return block_ptr_stack.top()+obj_counter++;
+            auto t_counter = obj_counter;
+            obj_counter+=n;
+            return block_ptr_stack.top() + t_counter;
         }
         #if DEBUG
             std::cout <<"[CONTIN ALLOC] Return adrr: "<<std::hex<<block_ptr_stack.top()+obj_counter<<std::dec<<std::endl;
         #endif
-        return block_ptr_stack.top()+obj_counter++;
+        auto t_counter = obj_counter;
+        obj_counter += n;
+        return block_ptr_stack.top() + t_counter;
     }
 
-    void deallocate([[maybe_unused]]T *p, [[maybe_unused]]std::size_t n) const {
+    void deallocate([[maybe_unused]]T *p, std::size_t n) {
         #if DEBUG
             std::cout <<"[DEALLOC] dealloc adrr: "<<std::hex<<p<<std::dec<<std::endl;
         #endif
-        --obj_counter;
+        obj_counter-=n;
         if(!obj_counter){
             #if DEBUG
                 std::cout<<"[DEALLOC FREE]\n";
@@ -74,8 +78,8 @@ struct block_allocator {
         p->~T();
     }
 private:
-    mutable size_t obj_counter = 0;
-    mutable size_t block_counter = 0;
-    mutable std::stack<T*> block_ptr_stack;
+    size_t obj_counter = 0;
+    size_t block_counter = 0;
+    std::stack<T*> block_ptr_stack;
 };
 

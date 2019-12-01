@@ -1,0 +1,9 @@
+/mnt/c/dev/OTUS/cpp_home_work/hw_04/local/allocator/build/CMakeFiles/install/strip.dir
+/mnt/c/dev/OTUS/cpp_home_work/hw_04/local/allocator/build/CMakeFiles/install.dir
+/mnt/c/dev/OTUS/cpp_home_work/hw_04/local/allocator/build/CMakeFiles/package.dir
+/mnt/c/dev/OTUS/cpp_home_work/hw_04/local/allocator/build/CMakeFiles/package_source.dir
+/mnt/c/dev/OTUS/cpp_home_work/hw_04/local/allocator/build/CMakeFiles/install/local.dir
+/mnt/c/dev/OTUS/cpp_home_work/hw_04/local/allocator/build/CMakeFiles/allocator.dir
+/mnt/c/dev/OTUS/cpp_home_work/hw_04/local/allocator/build/CMakeFiles/edit_cache.dir
+/mnt/c/dev/OTUS/cpp_home_work/hw_04/local/allocator/build/CMakeFiles/rebuild_cache.dir
+/mnt/c/dev/OTUS/cpp_home_work/hw_04/local/allocator/build/CMakeFiles/list_install_components.dir

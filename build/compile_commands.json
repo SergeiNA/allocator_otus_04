@@ -1,0 +1,7 @@
+[
+{
+  "directory": "/mnt/c/dev/OTUS/cpp_home_work/hw_04/local/allocator/build",
+  "command": "/usr/bin/clang++-6.0    -O3 -DNDEBUG   -Wpedantic -Wall -Wextra -std=gnu++1z -o CMakeFiles/allocator.dir/allocator.cpp.o -c /mnt/c/dev/OTUS/cpp_home_work/hw_04/local/allocator/allocator.cpp",
+  "file": "/mnt/c/dev/OTUS/cpp_home_work/hw_04/local/allocator/allocator.cpp"
+}
+]
