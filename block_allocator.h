@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stack>
+#include <assert.h>
 
 template<typename T, size_t N>
 struct block_allocator {
@@ -16,6 +17,7 @@ struct block_allocator {
     };
 
     T *allocate(std::size_t n) {
+        assert(n<=N-obj_counter);
         if(!obj_counter || obj_counter == N){
             obj_counter = 0;
         #if DEBUG
@@ -43,6 +45,7 @@ struct block_allocator {
     }
 
     void deallocate([[maybe_unused]]T *p, std::size_t n) {
+        assert(n<=obj_counter);
         #if DEBUG
             std::cout <<"[DEALLOC] dealloc adrr: "<<std::hex<<p<<std::dec<<std::endl;
         #endif
