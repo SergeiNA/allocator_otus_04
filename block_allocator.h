@@ -17,14 +17,17 @@ struct block_allocator {
     };
 
     T *allocate(std::size_t n) {
-        assert(n<=N-obj_counter);
-        if(!obj_counter || obj_counter == N){
+        if(n>N)
+            throw std::bad_alloc();
+        if(!obj_counter 
+           || obj_counter == N
+           || n > (N - obj_counter)){
             obj_counter = 0;
         #if DEBUG
             std::cout <<"[START ALLOC] N: "<< N <<std::endl;
-            std::cout<< "[ALLOC] SizeOf N*T: "<< N * n * sizeof(T) <<std::endl;
+            std::cout<< "[ALLOC] SizeOf N*T: "<< N  * sizeof(T) <<std::endl;
         #endif
-            auto p = std::malloc(n*N*sizeof(T));
+            auto p = std::malloc(N*sizeof(T));
             if (!p)
                 throw std::bad_alloc();
             ++block_counter;
@@ -33,7 +36,8 @@ struct block_allocator {
                 std::cout <<"[INIT ALLOC] Return adrr: "<<std::hex<<block_ptr_stack.top()<<std::dec<<std::endl;
             #endif
             auto t_counter = obj_counter;
-            obj_counter+=n;
+            // if n > free space in cur block substr from n that free part
+            obj_counter += (n > (N - obj_counter) ? (n-(N-obj_counter)) : n); 
             return block_ptr_stack.top() + t_counter;
         }
         #if DEBUG
@@ -45,17 +49,24 @@ struct block_allocator {
     }
 
     void deallocate([[maybe_unused]]T *p, std::size_t n) {
-        assert(n<=obj_counter);
+        if(n > N)
+            throw std::bad_alloc();
         #if DEBUG
             std::cout <<"[DEALLOC] dealloc adrr: "<<std::hex<<p<<std::dec<<std::endl;
         #endif
-        obj_counter-=n;
+        size_t residuals =0;
+        if(n > obj_counter){
+            residuals = n-obj_counter;
+            obj_counter=0;
+        }
+        else
+            obj_counter-=n;
         if(!obj_counter){
             #if DEBUG
                 std::cout<<"[DEALLOC FREE]\n";
                 std::cout <<"Init adrr: "<<std::hex<<block_ptr_stack.top()<<"\naddr to free: "<<std::hex<<p<<std::dec<<std::endl;
             #endif
-            obj_counter = N;
+            obj_counter = N - residuals;
             --block_counter;
             if(block_counter==0){
                 while(!block_ptr_stack.empty()){
